@@ -274,3 +274,36 @@ def run_trial(graph, question_list, num_trials=1):
         data, index=[f"Question {i+1}" for i in range(len(question_list))]
     )
     return results
+
+
+def create_md(csv_path, output_path, questions):
+    """
+    This function will convert a trial csv into md for evaluation
+
+    Args:
+    csv_path: string, path to the csv file
+    output_path: string, path to the output file
+    qusetions: list, list of questions
+
+    Returns:
+    None
+    """
+    # Load the CSV file
+    df = pd.read_csv(csv_path)
+
+    # Initialize a list to store the markdown content
+    markdown_content = []
+
+    # Iterate through each question
+    for i in range(len(df)):
+        question_number = f"Question {i + 1}"
+        markdown_content.append(f"## {question_number} {questions[i]}\n")
+
+        # Iterate through each column (model-method pair)
+        for column in df.columns:
+            response = df.iloc[i][column]
+            markdown_content.append(f"**{column}**:\n\n{response}\n\n")
+
+    # Write the markdown content to a file
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(markdown_content))
